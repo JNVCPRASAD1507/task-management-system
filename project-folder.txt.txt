@@ -1,0 +1,263 @@
+task-management-system/
+│
+├── frontend/
+│   │
+│   ├── public/
+│   │   ├── favicon.ico
+│   │   └── assets/
+│   │
+│   ├── src/
+│   │   │
+│   │   ├── api/
+│   │   │   ├── axios.ts
+│   │   │   ├── auth.api.ts
+│   │   │   ├── users.api.ts
+│   │   │   ├── tasks.api.ts
+│   │   │   ├── comments.api.ts
+│   │   │   ├── attachments.api.ts
+│   │   │   ├── notifications.api.ts
+│   │   │   └── dashboard.api.ts
+│   │   │
+│   │   ├── assets/
+│   │   │   ├── images/
+│   │   │   └── icons/
+│   │   │
+│   │   ├── components/
+│   │   │   │
+│   │   │   ├── common/
+│   │   │   │   ├── Loader.tsx
+│   │   │   │   ├── EmptyState.tsx
+│   │   │   │   ├── ErrorState.tsx
+│   │   │   │   ├── ConfirmDialog.tsx
+│   │   │   │   ├── Pagination.tsx
+│   │   │   │   ├── SearchInput.tsx
+│   │   │   │   └── PageHeader.tsx
+│   │   │   │
+│   │   │   ├── auth/
+│   │   │   │   ├── ProtectedRoute.tsx
+│   │   │   │   └── RoleRoute.tsx
+│   │   │   │
+│   │   │   ├── layout/
+│   │   │   │   ├── AppLayout.tsx
+│   │   │   │   ├── Navbar.tsx
+│   │   │   │   ├── Sidebar.tsx
+│   │   │   │   └── MobileNavbar.tsx
+│   │   │   │
+│   │   │   ├── dashboard/
+│   │   │   │   ├── DashboardCard.tsx
+│   │   │   │   └── DashboardStats.tsx
+│   │   │   │
+│   │   │   ├── tasks/
+│   │   │   │   ├── TaskTable.tsx
+│   │   │   │   ├── TaskCard.tsx
+│   │   │   │   ├── TaskForm.tsx
+│   │   │   │   ├── TaskFilters.tsx
+│   │   │   │   ├── TaskStatusBadge.tsx
+│   │   │   │   ├── PriorityBadge.tsx
+│   │   │   │   └── TaskActivity.tsx
+│   │   │   │
+│   │   │   ├── comments/
+│   │   │   │   ├── CommentList.tsx
+│   │   │   │   ├── CommentItem.tsx
+│   │   │   │   └── CommentForm.tsx
+│   │   │   │
+│   │   │   ├── attachments/
+│   │   │   │   ├── AttachmentList.tsx
+│   │   │   │   └── AttachmentUpload.tsx
+│   │   │   │
+│   │   │   ├── notifications/
+│   │   │   │   ├── NotificationList.tsx
+│   │   │   │   └── NotificationItem.tsx
+│   │   │   │
+│   │   │   └── users/
+│   │   │       ├── UserTable.tsx
+│   │   │       ├── UserForm.tsx
+│   │   │       └── UserStatusBadge.tsx
+│   │   │
+│   │   ├── pages/
+│   │   │   │
+│   │   │   ├── auth/
+│   │   │   │   ├── LoginPage.tsx
+│   │   │   │   ├── RegisterPage.tsx
+│   │   │   │   ├── ProfilePage.tsx
+│   │   │   │   └── ChangePasswordPage.tsx
+│   │   │   │
+│   │   │   ├── dashboard/
+│   │   │   │   └── DashboardPage.tsx
+│   │   │   │
+│   │   │   ├── tasks/
+│   │   │   │   ├── TaskListPage.tsx
+│   │   │   │   ├── CreateTaskPage.tsx
+│   │   │   │   ├── EditTaskPage.tsx
+│   │   │   │   └── TaskDetailsPage.tsx
+│   │   │   │
+│   │   │   ├── users/
+│   │   │   │   ├── UserListPage.tsx
+│   │   │   │   ├── CreateUserPage.tsx
+│   │   │   │   └── EditUserPage.tsx
+│   │   │   │
+│   │   │   ├── notifications/
+│   │   │   │   └── NotificationsPage.tsx
+│   │   │   │
+│   │   │   ├── ForbiddenPage.tsx
+│   │   │   └── NotFoundPage.tsx
+│   │   │
+│   │   ├── context/
+│   │   │   └── AuthContext.tsx
+│   │   │
+│   │   ├── hooks/
+│   │   │   ├── useAuth.ts
+│   │   │   ├── useTasks.ts
+│   │   │   ├── useUsers.ts
+│   │   │   └── useNotifications.ts
+│   │   │
+│   │   ├── routes/
+│   │   │   └── AppRoutes.tsx
+│   │   │
+│   │   ├── schemas/
+│   │   │   ├── auth.schema.ts
+│   │   │   ├── task.schema.ts
+│   │   │   └── user.schema.ts
+│   │   │
+│   │   ├── types/
+│   │   │   ├── auth.types.ts
+│   │   │   ├── user.types.ts
+│   │   │   ├── task.types.ts
+│   │   │   ├── comment.types.ts
+│   │   │   ├── attachment.types.ts
+│   │   │   └── notification.types.ts
+│   │   │
+│   │   ├── utils/
+│   │   │   ├── token.ts
+│   │   │   ├── date.ts
+│   │   │   ├── errorHandler.ts
+│   │   │   └── constants.ts
+│   │   │
+│   │   ├── theme/
+│   │   │   └── theme.ts
+│   │   │
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   └── vite-env.d.ts
+│   │
+│   ├── tests/
+│   │   ├── auth.test.tsx
+│   │   ├── dashboard.test.tsx
+│   │   └── tasks.test.tsx
+│   │
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── index.html
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── vite.config.ts
+│   └── README.md
+│
+│
+├── backend/
+│   │
+│   ├── app/
+│   │   │
+│   │   ├── main.py
+│   │   │
+│   │   ├── api/
+│   │   │   │
+│   │   │   ├── deps.py
+│   │   │   │
+│   │   │   └── routes/
+│   │   │       ├── auth.py
+│   │   │       ├── users.py
+│   │   │       ├── tasks.py
+│   │   │       ├── comments.py
+│   │   │       ├── attachments.py
+│   │   │       ├── notifications.py
+│   │   │       ├── dashboard.py
+│   │   │       └── audit_logs.py
+│   │   │
+│   │   ├── core/
+│   │   │   ├── config.py
+│   │   │   ├── database.py
+│   │   │   ├── security.py
+│   │   │   ├── exceptions.py
+│   │   │   └── constants.py
+│   │   │
+│   │   ├── models/
+│   │   │   ├── __init__.py
+│   │   │   ├── user.py
+│   │   │   ├── task.py
+│   │   │   ├── comment.py
+│   │   │   ├── attachment.py
+│   │   │   ├── notification.py
+│   │   │   └── audit_log.py
+│   │   │
+│   │   ├── schemas/
+│   │   │   ├── auth.py
+│   │   │   ├── user.py
+│   │   │   ├── task.py
+│   │   │   ├── comment.py
+│   │   │   ├── attachment.py
+│   │   │   ├── notification.py
+│   │   │   └── dashboard.py
+│   │   │
+│   │   ├── repositories/
+│   │   │   ├── user_repository.py
+│   │   │   ├── task_repository.py
+│   │   │   ├── comment_repository.py
+│   │   │   └── notification_repository.py
+│   │   │
+│   │   ├── services/
+│   │   │   ├── auth_service.py
+│   │   │   ├── user_service.py
+│   │   │   ├── task_service.py
+│   │   │   ├── comment_service.py
+│   │   │   ├── attachment_service.py
+│   │   │   ├── notification_service.py
+│   │   │   ├── dashboard_service.py
+│   │   │   └── audit_service.py
+│   │   │
+│   │   ├── middleware/
+│   │   │   └── request_logging.py
+│   │   │
+│   │   ├── utils/
+│   │   │   ├── file_utils.py
+│   │   │   └── pagination.py
+│   │   │
+│   │   └── background/
+│   │       └── notification_tasks.py
+│   │
+│   ├── alembic/
+│   │   ├── versions/
+│   │   ├── env.py
+│   │   └── script.py.mako
+│   │
+│   ├── uploads/
+│   │   └── .gitkeep
+│   │
+│   ├── tests/
+│   │   ├── conftest.py
+│   │   ├── test_auth.py
+│   │   ├── test_users.py
+│   │   ├── test_tasks.py
+│   │   ├── test_comments.py
+│   │   └── test_dashboard.py
+│   │
+│   ├── alembic.ini
+│   ├── requirements.txt
+│   ├── .env
+│   ├── .env.example
+│   ├── Dockerfile
+│   └── README.md
+│
+│
+├── docs/
+│   ├── architecture.md
+│   ├── database-schema.md
+│   ├── api-documentation.md
+│   ├── test-cases.md
+│   └── postman/
+│       └── Task-Management-System.postman_collection.json
+│
+├── docker-compose.yml
+├── .gitignore
+├── README.md
+└── LICENSE
