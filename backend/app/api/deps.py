@@ -1,14 +1,23 @@
-
 from collections.abc import Generator
 
-from fastapi import Depends, Header
+from fastapi import Depends
+from fastapi.security import (
+    HTTPAuthorizationCredentials,
+    HTTPBearer,
+)
 from sqlalchemy.orm import Session
 
 from app.core.constants import UserRole
 from app.core.database import SessionLocal
-from app.core.exceptions import ForbiddenException, UnauthorizedException
+from app.core.exceptions import (
+    ForbiddenException,
+    UnauthorizedException,
+)
 from app.core.security import decode_access_token
 from app.models.user import User
+
+
+security = HTTPBearer()
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -21,42 +30,43 @@ def get_db() -> Generator[Session, None, None]:
 
 
 def get_current_user(
-    authorization: str | None = Header(default=None),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db),
 ) -> User:
-    if not authorization:
-        raise UnauthorizedException("Authorization header is required")
-
-    if not authorization.startswith("Bearer "):
-        raise UnauthorizedException("Invalid authorization header")
-
-    token = authorization.replace("Bearer ", "", 1).strip()
-
-    if not token:
-        raise UnauthorizedException("Access token is required")
+    token = credentials.credentials
 
     payload = decode_access_token(token)
 
     if not payload:
-        raise UnauthorizedException("Invalid or expired access token")
+        raise UnauthorizedException(
+            "Invalid or expired access token"
+        )
 
     user_id = payload.get("sub")
 
     if not user_id:
-        raise UnauthorizedException("Invalid access token payload")
+        raise UnauthorizedException(
+            "Invalid access token payload"
+        )
 
     try:
         user_id = int(user_id)
     except (TypeError, ValueError):
-        raise UnauthorizedException("Invalid user ID in access token")
+        raise UnauthorizedException(
+            "Invalid user ID in access token"
+        )
 
     user = db.get(User, user_id)
 
     if not user:
-        raise UnauthorizedException("User not found")
+        raise UnauthorizedException(
+            "User not found"
+        )
 
     if not user.is_active:
-        raise ForbiddenException("User account is inactive")
+        raise ForbiddenException(
+            "User account is inactive"
+        )
 
     return user
 
@@ -65,7 +75,9 @@ def require_roles(*roles: UserRole):
     def role_checker(
         current_user: User = Depends(get_current_user),
     ) -> User:
-        if current_user.role not in [role.value for role in roles]:
+        if current_user.role not in [
+            role.value for role in roles
+        ]:
             raise ForbiddenException(
                 "You do not have permission to access this resource"
             )
@@ -73,4 +85,3 @@ def require_roles(*roles: UserRole):
         return current_user
 
     return role_checker
-

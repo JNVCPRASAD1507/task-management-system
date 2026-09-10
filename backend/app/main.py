@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from app.core.config import settings
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.routes import auth, users
+
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
@@ -19,6 +21,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+app.include_router(auth.router)
+app.include_router(users.router)
 
 # ---------------------------------------------------------
 # Root Endpoint
