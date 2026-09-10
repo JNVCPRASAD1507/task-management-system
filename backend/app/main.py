@@ -1,18 +1,46 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
-from app.core.config import settings
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import auth, users
+from app.api.routes import (
+    attachments,
+    audit_logs,
+    auth,
+    comments,
+    dashboard,
+    notifications,
+    tasks,
+    users,
+)
+from app.core.config import settings
+from app.core.database import Base, engine
+from app.middleware.request_logging import RequestLoggingMiddleware
+
+# Import all models so SQLAlchemy knows about every table.
+from app import models  # noqa: F401
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Application startup
+    Base.metadata.create_all(bind=engine)
+
+    yield
+
+    # Application shutdown
+    engine.dispose()
+
 
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
-    description="Task Management System",
+    description="Task Management System API",
+    lifespan=lifespan,
 )
 
-# ---------------------------------------------------------
-# CORS Configuration
-# ---------------------------------------------------------
+
+app.add_middleware(RequestLoggingMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,25 +53,30 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(tasks.router)
+app.include_router(comments.router)
+app.include_router(attachments.router)
+app.include_router(notifications.router)
+app.include_router(dashboard.router)
+app.include_router(audit_logs.router)
 
-# ---------------------------------------------------------
-# Root Endpoint
-# ---------------------------------------------------------
 
-
-@app.get("/", tags=["Health Check"])
+@app.get(
+    "/",
+    tags=["Health"],
+)
 def root():
     return {
-        "message": "Welcome to the Task Management System",
+        "message": "Task Management System API",
         "version": settings.app_version,
-        "environment": settings.environment,
+        "status": "running",
     }
-    
-# ---------------------------------------------------------
-# Health Check
-# ---------------------------------------------------------
 
-@app.get("/health", tags=["Health"])
+
+@app.get(
+    "/health",
+    tags=["Health"],
+)
 def health_check():
     return {
         "status": "healthy",
