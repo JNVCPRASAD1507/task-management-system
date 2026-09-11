@@ -8,14 +8,14 @@ class UserBase(BaseModel):
     full_name: str = Field(min_length=2 , max_length=100)
     
 class UserCreate(BaseModel):
-    full_name: str = Field(min_length=2, max_length=100)
+    full_name: str = Field(min_length=2 , max_length=100)
     password: str = Field(min_length=8, max_length=128)
     email: EmailStr
     role: UserRole = UserRole.MEMBER
 
 
 class UserUpdate(BaseModel):
-    full_name: str | None = Field(
+    full_name: str | None = Field( 
         default=None,
         min_length=2,
         max_length=100,
