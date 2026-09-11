@@ -21,7 +21,7 @@ class AuthService:
         existing_user = self.user_repository.get_by_email(data.email)
         
         if existing_user:
-            raise ConflictException("User with this email already exists")
+            raise ConflictException("A user with this email already exists")
         
         user = User(
             full_name = data.full_name,
@@ -51,13 +51,13 @@ class AuthService:
         user = self.user_repository.get_by_email(data.email)
         
         if not user:
-            raise UnauthorizedException("Invalid Email")
+            raise UnauthorizedException("Invalid email or password")
         
         if not verify_password(
             data.password, user.hashed_password,
         ):
             raise UnauthorizedException(
-                "Invalid Password"
+                "Invalid email or password"
             )
             
         if not user.is_active:
