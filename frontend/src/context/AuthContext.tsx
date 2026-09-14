@@ -1,5 +1,3 @@
-
-
 import {
   createContext,
   useCallback,
@@ -27,15 +25,16 @@ interface AuthContextValue {
   accessToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+
   login: (data: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextValue | undefined>(
-  undefined,
-);
+const AuthContext = createContext<
+  AuthContextValue | undefined
+>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -59,11 +58,13 @@ export const AuthProvider = ({
     }
   });
 
-  const [accessToken, setAccessToken] = useState<string | null>(
-    () => localStorage.getItem("access_token"),
-  );
+  const [accessToken, setAccessToken] =
+    useState<string | null>(() =>
+      localStorage.getItem("access_token"),
+    );
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] =
+    useState(true);
 
   const logout = useCallback(() => {
     localStorage.removeItem("access_token");
@@ -74,7 +75,8 @@ export const AuthProvider = ({
   }, []);
 
   const refreshUser = useCallback(async () => {
-    const token = localStorage.getItem("access_token");
+    const token =
+      localStorage.getItem("access_token");
 
     if (!token) {
       setAccessToken(null);
@@ -83,7 +85,8 @@ export const AuthProvider = ({
     }
 
     try {
-      const currentUser = await getCurrentUser();
+      const currentUser =
+        await getCurrentUser();
 
       setAccessToken(token);
       setUser(currentUser);
@@ -131,7 +134,8 @@ export const AuthProvider = ({
 
   const register = useCallback(
     async (data: RegisterRequest) => {
-      const response = await registerApi(data);
+      const response =
+        await registerApi(data);
 
       localStorage.setItem(
         "access_token",
@@ -153,7 +157,8 @@ export const AuthProvider = ({
     () => ({
       user,
       accessToken,
-      isAuthenticated: Boolean(accessToken && user),
+      isAuthenticated:
+        Boolean(accessToken && user),
       isLoading,
       login,
       register,
@@ -178,15 +183,16 @@ export const AuthProvider = ({
   );
 };
 
-export const useAuth = (): AuthContextValue => {
-  const context = useContext(AuthContext);
+export const useAuth =
+  (): AuthContextValue => {
+    const context =
+      useContext(AuthContext);
 
-  if (!context) {
-    throw new Error(
-      "useAuth must be used inside an AuthProvider",
-    );
-  }
+    if (!context) {
+      throw new Error(
+        "useAuth must be used inside an AuthProvider",
+      );
+    }
 
-  return context;
-};
-
+    return context;
+  };

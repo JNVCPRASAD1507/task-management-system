@@ -1,26 +1,31 @@
-
 import { Navigate, Outlet } from "react-router-dom";
+
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
+
 import { useAuth } from "../../hooks/useAuth";
 
+import type { UserRole } from "../../types/auth.types";
+
 interface RoleRouteProps {
-  allowedRoles: string[];
+  allowedRoles: UserRole[];
 }
 
 const RoleRoute = ({ allowedRoles }: RoleRouteProps) => {
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div
-        style={{
+      <Box
+        sx={{
           minHeight: "100vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        Loading...
-      </div>
+        <CircularProgress />
+      </Box>
     );
   }
 
@@ -29,7 +34,7 @@ const RoleRoute = ({ allowedRoles }: RoleRouteProps) => {
   }
 
   if (!allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthorized" replace />;
+    return <Navigate to="/forbidden" replace />;
   }
 
   return <Outlet />;
