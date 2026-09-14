@@ -1,7 +1,7 @@
 import {
   CalendarTodayOutlined,
   EditOutlined,
-  PersonOutline,
+  PersonOutlined,
 } from "@mui/icons-material";
 import {
   Card,
@@ -46,15 +46,15 @@ const TaskCard = ({ task, onEdit }: TaskCardProps) => {
         <Stack spacing={2}>
           <Stack
             direction="row"
-            alignItems="flex-start"
-            justifyContent="space-between"
+            sx={{alignItems:"flex-start",
+            justifyContent:"space-between"}}
             spacing={1}
           >
             <Typography
               variant="h6"
-              fontWeight={700}
               sx={{
                 wordBreak: "break-word",
+                fontWeight:700
               }}
             >
               {task.title}
@@ -93,7 +93,7 @@ const TaskCard = ({ task, onEdit }: TaskCardProps) => {
           <Stack
             direction="row"
             spacing={1}
-            flexWrap="wrap"
+            sx={{flexWrap:"wrap"}}
             useFlexGap
           >
             <TaskStatusBadge status={task.status} />
@@ -105,9 +105,10 @@ const TaskCard = ({ task, onEdit }: TaskCardProps) => {
               <Stack
                 direction="row"
                 spacing={1}
-                alignItems="center"
+                sx={{
+                alignItems:"center"}}
               >
-                <PersonOutline
+                <PersonOutlined
                   fontSize="small"
                   color="action"
                 />
@@ -125,7 +126,7 @@ const TaskCard = ({ task, onEdit }: TaskCardProps) => {
               <Stack
                 direction="row"
                 spacing={1}
-                alignItems="center"
+                sx={{alignItems:"center"}}
               >
                 <CalendarTodayOutlined
                   fontSize="small"

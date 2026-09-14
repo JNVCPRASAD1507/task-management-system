@@ -30,7 +30,7 @@ const TaskFilters = ({
         sm: "row",
       }}
       spacing={2}
-      flexWrap="wrap"
+      sx={{flexWrap:"wrap"}}
       useFlexGap
     >
       <FormControl

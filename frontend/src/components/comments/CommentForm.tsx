@@ -1,17 +1,11 @@
-import {
-  Button,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Button, Stack, TextField } from "@mui/material";
 import { useState } from "react";
 
 interface CommentFormProps {
   initialValue?: string;
   loading?: boolean;
   submitLabel?: string;
-  onSubmit: (
-    content: string
-  ) => void | Promise<void>;
+  onSubmit: (content: string) => void | Promise<void>;
 }
 
 const CommentForm = ({
@@ -20,12 +14,9 @@ const CommentForm = ({
   submitLabel = "Add Comment",
   onSubmit,
 }: CommentFormProps) => {
-  const [content, setContent] =
-    useState(initialValue);
+  const [content, setContent] = useState(initialValue);
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const value = content.trim();
@@ -42,31 +33,25 @@ const CommentForm = ({
   };
 
   return (
-    <Stack
-      component="form"
-      onSubmit={handleSubmit}
-      spacing={1.5}
-    >
+    <Stack component="form" onSubmit={handleSubmit} spacing={1.5}>
       <TextField
         label="Comment"
         value={content}
-        onChange={(event) =>
-          setContent(event.target.value)
-        }
+        onChange={(event) => setContent(event.target.value)}
         multiline
         minRows={3}
         fullWidth
-        inputProps={{
-          maxLength: 5000,
+        slotProps={{
+          htmlInput: {
+            maxLength: 5000,
+          },
         }}
       />
 
       <Button
         type="submit"
         variant="contained"
-        disabled={
-          loading || !content.trim()
-        }
+        disabled={loading || !content.trim()}
         sx={{
           alignSelf: {
             xs: "stretch",

@@ -1,9 +1,11 @@
 import {
-  AttachFileOutlined,
   Button,
   Stack,
   Typography,
 } from "@mui/material";
+import {
+  AttachFileOutlined,
+} from "@mui/icons-material";
 import { useState } from "react";
 
 interface AttachmentUploadProps {

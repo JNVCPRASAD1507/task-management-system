@@ -1,5 +1,6 @@
-
 import type { User, UserRole, UserStatus } from "./auth.types";
+
+export type { User, UserRole, UserStatus } from "./auth.types";
 
 export interface UserCreate {
   full_name: string;

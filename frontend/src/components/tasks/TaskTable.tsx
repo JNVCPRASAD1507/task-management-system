@@ -1,5 +1,5 @@
 import {
-  DeleteOutline,
+  DeleteOutlined,
   EditOutlined,
   VisibilityOutlined,
 } from "@mui/icons-material";
@@ -101,11 +101,11 @@ const TaskTable = ({
             >
               <TableCell>
                 <Typography
-                  fontWeight={600}
                   sx={{
                     minWidth: 180,
                     maxWidth: 300,
                     wordBreak: "break-word",
+                    fontWeight:600,
                   }}
                 >
                   {task.title}
@@ -133,7 +133,7 @@ const TaskTable = ({
               <TableCell align="right">
                 <Stack
                   direction="row"
-                  justifyContent="flex-end"
+                  sx={{justifyContent:"flex-end"}}
                 >
                   <Tooltip title="View">
                     <IconButton
@@ -164,7 +164,7 @@ const TaskTable = ({
                         color="error"
                         onClick={() => onDelete(task)}
                       >
-                        <DeleteOutline fontSize="small" />
+                        <DeleteOutlined fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   )}

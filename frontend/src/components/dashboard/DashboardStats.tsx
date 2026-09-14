@@ -1,5 +1,5 @@
 import {
-  CheckCircleOutline,
+  CheckCircleOutlined,
   GroupOutlined,
   HourglassEmptyOutlined,
   ListAltOutlined,
@@ -47,7 +47,7 @@ const DashboardStats = ({ stats }: DashboardStatsProps) => {
         <DashboardCard
           title="Completed"
           value={stats.completed_tasks}
-          icon={<CheckCircleOutline />}
+          icon={<CheckCircleOutlined />}
         />
       </Grid>
 

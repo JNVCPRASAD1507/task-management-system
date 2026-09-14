@@ -1,5 +1,5 @@
 import {
-  DeleteOutline,
+  DeleteOutlined,
   DownloadOutlined,
   InsertDriveFileOutlined,
 } from "@mui/icons-material";
@@ -77,7 +77,7 @@ const AttachmentList = ({
                       onDelete(attachment)
                     }
                   >
-                    <DeleteOutline fontSize="small" />
+                    <DeleteOutlined fontSize="small" />
                   </IconButton>
                 </Tooltip>
               )}

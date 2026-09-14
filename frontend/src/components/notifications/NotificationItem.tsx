@@ -1,5 +1,5 @@
 import {
-  DeleteOutline,
+  DeleteOutlined,
   MarkEmailReadOutlined,
   NotificationsOutlined,
 } from "@mui/icons-material";
@@ -61,7 +61,7 @@ const NotificationItem = ({
                   onDelete(notification)
                 }
               >
-                <DeleteOutline fontSize="small" />
+                <DeleteOutlined fontSize="small" />
               </IconButton>
             </Tooltip>
           )}

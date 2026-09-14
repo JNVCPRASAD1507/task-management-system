@@ -1,5 +1,5 @@
 import {
-  DeleteOutline,
+  DeleteOutlined,
   EditOutlined,
 } from "@mui/icons-material";
 import {
@@ -41,12 +41,12 @@ const CommentItem = ({
       <Stack spacing={1}>
         <Stack
           direction="row"
-          justifyContent="space-between"
-          alignItems="flex-start"
+          sx = {{ justifyContent:"space-between",
+          alignItems:"flex-start"}}
           spacing={2}
         >
           <Stack>
-            <Typography fontWeight={700}>
+            <Typography sx={{ fontWeight : 700 }}>
               {comment.user?.full_name ??
                 `User #${comment.user_id}`}
             </Typography>
@@ -83,7 +83,7 @@ const CommentItem = ({
                       onDelete(comment)
                     }
                   >
-                    <DeleteOutline fontSize="small" />
+                    <DeleteOutlined fontSize="small" />
                   </IconButton>
                 </Tooltip>
               )}

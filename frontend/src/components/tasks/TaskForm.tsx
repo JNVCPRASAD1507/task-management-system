@@ -20,9 +20,7 @@ interface TaskFormProps {
   initialValues?: Partial<Task>;
   loading?: boolean;
   submitLabel?: string;
-  onSubmit: (
-    values: TaskCreate | TaskUpdate
-  ) => void | Promise<void>;
+  onSubmit: (values: TaskCreate | TaskUpdate) => void | Promise<void>;
 }
 
 const TaskForm = ({
@@ -31,32 +29,23 @@ const TaskForm = ({
   submitLabel = "Save Task",
   onSubmit,
 }: TaskFormProps) => {
-  const [title, setTitle] = useState(
-    initialValues?.title ?? ""
-  );
+  const [title, setTitle] = useState(initialValues?.title ?? "");
 
   const [description, setDescription] = useState(
-    initialValues?.description ?? ""
+    initialValues?.description ?? "",
   );
 
-  const [priority, setPriority] =
-    useState<TaskPriority>(
-      initialValues?.priority ?? "medium"
-    );
-
-  const [dueDate, setDueDate] = useState(
-    initialValues?.due_date ?? ""
+  const [priority, setPriority] = useState<TaskPriority>(
+    initialValues?.priority ?? "medium",
   );
+
+  const [dueDate, setDueDate] = useState(initialValues?.due_date ?? "");
 
   const [assigneeId, setAssigneeId] = useState(
-    initialValues?.assignee_id
-      ? String(initialValues.assignee_id)
-      : ""
+    initialValues?.assignee_id ? String(initialValues.assignee_id) : "",
   );
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const payload: TaskCreate = {
@@ -64,37 +53,31 @@ const TaskForm = ({
       description: description.trim() || null,
       priority,
       due_date: dueDate || null,
-      assignee_id: assigneeId
-        ? Number(assigneeId)
-        : null,
+      assignee_id: assigneeId ? Number(assigneeId) : null,
     };
 
     await onSubmit(payload);
   };
 
   return (
-    <Stack
-      component="form"
-      onSubmit={handleSubmit}
-      spacing={2.5}
-    >
+    <Stack component="form" onSubmit={handleSubmit} spacing={2.5}>
       <TextField
         label="Task Title"
         value={title}
-        onChange={(event) =>
-          setTitle(event.target.value)
-        }
+        onChange={(event) => setTitle(event.target.value)}
         required
         fullWidth
-        inputProps={{ maxLength: 200 }}
+        slotProps={{
+          htmlInput: {
+            maxLength: 200,
+          },
+        }}
       />
 
       <TextField
         label="Description"
         value={description}
-        onChange={(event) =>
-          setDescription(event.target.value)
-        }
+        onChange={(event) => setDescription(event.target.value)}
         multiline
         minRows={4}
         fullWidth
@@ -106,11 +89,7 @@ const TaskForm = ({
         <Select
           value={priority}
           label="Priority"
-          onChange={(event) =>
-            setPriority(
-              event.target.value as TaskPriority
-            )
-          }
+          onChange={(event) => setPriority(event.target.value as TaskPriority)}
         >
           <MenuItem value="low">Low</MenuItem>
           <MenuItem value="medium">Medium</MenuItem>
@@ -123,11 +102,11 @@ const TaskForm = ({
         label="Due Date"
         type="date"
         value={dueDate}
-        onChange={(event) =>
-          setDueDate(event.target.value)
-        }
-        InputLabelProps={{
-          shrink: true,
+        onChange={(event) => setDueDate(event.target.value)}
+        slotProps={{
+          inputLabel: {
+            shrink: true,
+          },
         }}
         fullWidth
       />
@@ -136,9 +115,7 @@ const TaskForm = ({
         label="Assignee ID"
         type="number"
         value={assigneeId}
-        onChange={(event) =>
-          setAssigneeId(event.target.value)
-        }
+        onChange={(event) => setAssigneeId(event.target.value)}
         helperText="Leave empty for an unassigned task."
         fullWidth
       />

@@ -32,8 +32,8 @@ const DashboardCard = ({
       <CardContent>
         <Stack
           direction="row"
-          alignItems="flex-start"
-          justifyContent="space-between"
+          sx={{alignItems:"flex-start",
+          justifyContent:"space-between"}}
           spacing={2}
         >
           <Stack spacing={0.5}>
@@ -63,14 +63,14 @@ const DashboardCard = ({
           </Stack>
 
           <Stack
-            alignItems="center"
-            justifyContent="center"
             sx={{
               width: 48,
               height: 48,
               borderRadius: 2,
               bgcolor: "action.selected",
               color: "primary.main",
+              alignItems:"center",
+            justifyContent:"center"
             }}
           >
             {icon}

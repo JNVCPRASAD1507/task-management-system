@@ -21,8 +21,8 @@ const CommentList = ({
     return (
       <Typography
         color="text.secondary"
-        textAlign="center"
-        py={3}
+       sx={{ textAlign:"center", py:3 }}
+        
       >
         No comments yet.
       </Typography>

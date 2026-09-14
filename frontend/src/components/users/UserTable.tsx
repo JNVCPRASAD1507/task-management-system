@@ -1,5 +1,5 @@
 import {
-  DeleteOutline,
+  DeleteOutlined,
   EditOutlined,
   VisibilityOutlined,
 } from "@mui/icons-material";
@@ -99,7 +99,7 @@ const UserTable = ({
               hover
             >
               <TableCell>
-                <Typography fontWeight={600}>
+                <Typography sx={{fontWeight: 600}}>
                   {user.full_name}
                 </Typography>
               </TableCell>
@@ -110,8 +110,7 @@ const UserTable = ({
 
               <TableCell>
                 <Typography
-                  textTransform="capitalize"
-                  fontWeight={600}
+                  sx={{fontWeight:600 , textTransform:"capitalize"}}
                 >
                   {user.role}
                 </Typography>
@@ -136,7 +135,7 @@ const UserTable = ({
               <TableCell align="right">
                 <Stack
                   direction="row"
-                  justifyContent="flex-end"
+                  sx={{justifyContent:"flex-end"}}
                 >
                   <Tooltip title="View">
                     <IconButton
@@ -173,7 +172,7 @@ const UserTable = ({
                           onDelete(user)
                         }
                       >
-                        <DeleteOutline fontSize="small" />
+                        <DeleteOutlined fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   )}
