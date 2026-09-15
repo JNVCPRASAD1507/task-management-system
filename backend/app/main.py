@@ -1,3 +1,4 @@
+
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -14,7 +15,7 @@ from app.api.routes import (
     users,
 )
 from app.core.config import settings
-from app.core.database import Base, engine
+from app.core.database import engine
 from app.middleware.request_logging import RequestLoggingMiddleware
 
 # Import all models so SQLAlchemy knows about every table.
@@ -23,12 +24,14 @@ from app import models  # noqa: F401
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Application startup
-    Base.metadata.create_all(bind=engine)
+    """
+    Application lifecycle.
 
+    Database schema management is handled by Alembic.
+    FastAPI should not run create_all() on every startup.
+    """
     yield
 
-    # Application shutdown
     engine.dispose()
 
 

@@ -1,3 +1,4 @@
+
 import {
   FormControl,
   InputLabel,
@@ -15,7 +16,7 @@ import type {
 interface TaskFiltersProps {
   filters: TaskFiltersType;
   onChange: (
-    filters: TaskFiltersType
+    filters: TaskFiltersType,
   ) => void;
 }
 
@@ -30,36 +31,54 @@ const TaskFilters = ({
         sm: "row",
       }}
       spacing={2}
-      sx={{flexWrap:"wrap"}}
+      sx={{
+        flexWrap: "wrap",
+      }}
       useFlexGap
     >
       <FormControl
         size="small"
         sx={{ minWidth: 170 }}
       >
-        <InputLabel>Status</InputLabel>
+        <InputLabel id="task-filter-status-label">
+          Status
+        </InputLabel>
 
         <Select
+          id="task-filter-status"
+          labelId="task-filter-status-label"
           value={filters.status ?? ""}
           label="Status"
           onChange={(event) => {
-            const value = event.target.value as TaskStatus | "";
+            const value =
+              event.target.value as
+                | TaskStatus
+                | "";
 
             onChange({
               ...filters,
               page: 1,
-              status: value || undefined,
+              status:
+                value || undefined,
             });
           }}
         >
-          <MenuItem value="">All Statuses</MenuItem>
-          <MenuItem value="todo">To Do</MenuItem>
+          <MenuItem value="">
+            All Statuses
+          </MenuItem>
+
+          <MenuItem value="todo">
+            To Do
+          </MenuItem>
+
           <MenuItem value="in_progress">
             In Progress
           </MenuItem>
+
           <MenuItem value="completed">
             Completed
           </MenuItem>
+
           <MenuItem value="cancelled">
             Cancelled
           </MenuItem>
@@ -70,27 +89,48 @@ const TaskFilters = ({
         size="small"
         sx={{ minWidth: 170 }}
       >
-        <InputLabel>Priority</InputLabel>
+        <InputLabel id="task-filter-priority-label">
+          Priority
+        </InputLabel>
 
         <Select
+          id="task-filter-priority"
+          labelId="task-filter-priority-label"
           value={filters.priority ?? ""}
           label="Priority"
           onChange={(event) => {
             const value =
-              event.target.value as TaskPriority | "";
+              event.target.value as
+                | TaskPriority
+                | "";
 
             onChange({
               ...filters,
               page: 1,
-              priority: value || undefined,
+              priority:
+                value || undefined,
             });
           }}
         >
-          <MenuItem value="">All Priorities</MenuItem>
-          <MenuItem value="low">Low</MenuItem>
-          <MenuItem value="medium">Medium</MenuItem>
-          <MenuItem value="high">High</MenuItem>
-          <MenuItem value="urgent">Urgent</MenuItem>
+          <MenuItem value="">
+            All Priorities
+          </MenuItem>
+
+          <MenuItem value="low">
+            Low
+          </MenuItem>
+
+          <MenuItem value="medium">
+            Medium
+          </MenuItem>
+
+          <MenuItem value="high">
+            High
+          </MenuItem>
+
+          <MenuItem value="urgent">
+            Urgent
+          </MenuItem>
         </Select>
       </FormControl>
     </Stack>

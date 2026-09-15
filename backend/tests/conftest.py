@@ -1,5 +1,5 @@
 
-
+import os
 import uuid
 
 import pytest
@@ -8,39 +8,49 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
-from app import models  # noqa: F401
-from app.api.deps import get_db
-from app.core.constants import UserRole, UserStatus
-from app.core.database import Base
-from app.core.security import create_access_token, hash_password
-from app.main import app
-from app.models.user import User
-
-
-# ---------------------------------------------------------
-# Test Database
-# ---------------------------------------------------------
+# ------------------------------------------------------------------
+# Force the application itself to use SQLite during tests.
+# This must happen BEFORE importing app modules.
+# ------------------------------------------------------------------
 
 TEST_DATABASE_URL = "sqlite:///:memory:"
 
+os.environ["DATABASE_URL"] = TEST_DATABASE_URL
+os.environ["SECRET_KEY"] = "test-secret-key"
+os.environ["CORS_ORIGINS"] = "http://localhost:5173"
+
+from app import models  # noqa: E402,F401
+from app.api.deps import get_db  # noqa: E402
+from app.core.constants import UserRole, UserStatus  # noqa: E402
+from app.core.database import Base  # noqa: E402
+from app.core.security import (  # noqa: E402
+    create_access_token,
+    hash_password,
+)
+from app.main import app  # noqa: E402
+from app.models.user import User  # noqa: E402
+
+
 test_engine = create_engine(
     TEST_DATABASE_URL,
-    connect_args={"check_same_thread": False},
+    connect_args={
+        "check_same_thread": False,
+    },
     poolclass=StaticPool,
 )
 
 
-# ---------------------------------------------------------
-# Database Dependency Override
-# ---------------------------------------------------------
-
 @pytest.fixture(scope="session")
 def test_database():
-    Base.metadata.create_all(bind=test_engine)
+    Base.metadata.create_all(
+        bind=test_engine
+    )
 
     yield test_engine
 
-    Base.metadata.drop_all(bind=test_engine)
+    Base.metadata.drop_all(
+        bind=test_engine
+    )
 
 
 @pytest.fixture()
@@ -61,26 +71,20 @@ def db(test_database):
         connection.close()
 
 
-# ---------------------------------------------------------
-# FastAPI Dependency Override
-# ---------------------------------------------------------
-
 @pytest.fixture()
 def client(db):
     def override_get_db():
         yield db
 
-    app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[
+        get_db
+    ] = override_get_db
 
     with TestClient(app) as test_client:
         yield test_client
 
     app.dependency_overrides.clear()
 
-
-# ---------------------------------------------------------
-# User Factory
-# ---------------------------------------------------------
 
 @pytest.fixture()
 def create_user(db):
@@ -93,8 +97,13 @@ def create_user(db):
     ):
         user = User(
             full_name=full_name,
-            email=email or f"{uuid.uuid4().hex}@example.com",
-            hashed_password=hash_password(password),
+            email=(
+                email
+                or f"{uuid.uuid4().hex}@example.com"
+            ),
+            hashed_password=hash_password(
+                password
+            ),
             role=role,
             status=(
                 UserStatus.ACTIVE.value
@@ -113,16 +122,14 @@ def create_user(db):
     return _create_user
 
 
-# ---------------------------------------------------------
-# Common Users
-# ---------------------------------------------------------
-
 @pytest.fixture()
 def admin_user(create_user):
     return create_user(
         role=UserRole.ADMIN.value,
         full_name="Admin User",
-        email=f"admin-{uuid.uuid4().hex}@example.com",
+        email=(
+            f"admin-{uuid.uuid4().hex}@example.com"
+        ),
     )
 
 
@@ -131,7 +138,9 @@ def manager_user(create_user):
     return create_user(
         role=UserRole.MANAGER.value,
         full_name="Manager User",
-        email=f"manager-{uuid.uuid4().hex}@example.com",
+        email=(
+            f"manager-{uuid.uuid4().hex}@example.com"
+        ),
     )
 
 
@@ -140,24 +149,25 @@ def member_user(create_user):
     return create_user(
         role=UserRole.MEMBER.value,
         full_name="Member User",
-        email=f"member-{uuid.uuid4().hex}@example.com",
+        email=(
+            f"member-{uuid.uuid4().hex}@example.com"
+        ),
     )
 
-
-# ---------------------------------------------------------
-# Authentication Token
-# ---------------------------------------------------------
 
 @pytest.fixture()
 def auth_headers():
     def _auth_headers(user: User):
         token = create_access_token(
-            data={"sub": str(user.id)}
+            data={
+                "sub": str(user.id)
+            }
         )
 
         return {
-            "Authorization": f"Bearer {token}"
+            "Authorization": (
+                f"Bearer {token}"
+            )
         }
 
     return _auth_headers
-

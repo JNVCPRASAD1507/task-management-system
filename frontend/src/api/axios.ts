@@ -1,15 +1,22 @@
+
 import axios from "axios";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   "http://localhost:8000";
 
+const API_TIMEOUT = Number(
+  import.meta.env.VITE_API_TIMEOUT || 15000,
+);
+
 const api = axios.create({
   baseURL: API_BASE_URL,
+  timeout: Number.isFinite(API_TIMEOUT)
+    ? API_TIMEOUT
+    : 15000,
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 15000,
 });
 
 api.interceptors.request.use(
@@ -24,26 +31,18 @@ api.interceptors.request.use(
 
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  },
+  (error) => Promise.reject(error),
 );
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (
-      error.response?.status === 401
-    ) {
-      localStorage.removeItem(
-        "access_token",
-      );
-
+    if (error.response?.status === 401) {
+      localStorage.removeItem("access_token");
       localStorage.removeItem("user");
 
       if (
-        window.location.pathname !==
-        "/login"
+        window.location.pathname !== "/login"
       ) {
         window.location.href = "/login";
       }
@@ -54,4 +53,3 @@ api.interceptors.response.use(
 );
 
 export default api;
-

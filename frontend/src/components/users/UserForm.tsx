@@ -1,15 +1,17 @@
+
 import {
   Button,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
   Stack,
   Switch,
   TextField,
-  FormControlLabel,
 } from "@mui/material";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 
 import type {
   User,
@@ -24,7 +26,9 @@ interface UserFormProps {
   editMode?: boolean;
   loading?: boolean;
   submitLabel?: string;
-  onSubmit: (values: UserCreate | UserUpdate) => void | Promise<void>;
+  onSubmit: (
+    values: UserCreate | UserUpdate,
+  ) => void | Promise<void>;
 }
 
 const UserForm = ({
@@ -34,21 +38,58 @@ const UserForm = ({
   submitLabel = "Save User",
   onSubmit,
 }: UserFormProps) => {
-  const [fullName, setFullName] = useState(initialValues?.full_name ?? "");
+  const [fullName, setFullName] =
+    useState(
+      initialValues?.full_name ?? "",
+    );
 
-  const [email, setEmail] = useState(initialValues?.email ?? "");
-
-  const [password, setPassword] = useState("");
-
-  const [role, setRole] = useState<UserRole>(initialValues?.role ?? "member");
-
-  const [status, setStatus] = useState<UserStatus>(
-    initialValues?.status ?? "active",
+  const [email, setEmail] = useState(
+    initialValues?.email ?? "",
   );
 
-  const [isActive, setIsActive] = useState(initialValues?.is_active ?? true);
+  const [password, setPassword] =
+    useState("");
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const [role, setRole] =
+    useState<UserRole>(
+      initialValues?.role ?? "member",
+    );
+
+  const [status, setStatus] =
+    useState<UserStatus>(
+      initialValues?.status ?? "active",
+    );
+
+  const [isActive, setIsActive] =
+    useState(
+      initialValues?.is_active ?? true,
+    );
+
+  useEffect(() => {
+    setFullName(
+      initialValues?.full_name ?? "",
+    );
+
+    setEmail(
+      initialValues?.email ?? "",
+    );
+
+    setRole(
+      initialValues?.role ?? "member",
+    );
+
+    setStatus(
+      initialValues?.status ?? "active",
+    );
+
+    setIsActive(
+      initialValues?.is_active ?? true,
+    );
+  }, [initialValues]);
+
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
 
     if (editMode) {
@@ -75,11 +116,18 @@ const UserForm = ({
   };
 
   return (
-    <Stack component="form" onSubmit={handleSubmit} spacing={2.5}>
+    <Stack
+      component="form"
+      onSubmit={handleSubmit}
+      spacing={2.5}
+    >
       <TextField
+        id="user-full-name"
         label="Full Name"
         value={fullName}
-        onChange={(event) => setFullName(event.target.value)}
+        onChange={(event) =>
+          setFullName(event.target.value)
+        }
         required
         fullWidth
         slotProps={{
@@ -91,64 +139,94 @@ const UserForm = ({
       />
 
       <TextField
+        id="user-email"
         label="Email"
         type="email"
         value={email}
-        onChange={(event) => setEmail(event.target.value)}
+        onChange={(event) =>
+          setEmail(event.target.value)
+        }
         required
         fullWidth
       />
 
       {!editMode && (
         <TextField
+          id="user-password"
           label="Password"
           type="password"
           value={password}
-          onChange={(event) => setPassword(event.target.value)}
+          onChange={(event) =>
+            setPassword(
+              event.target.value,
+            )
+          }
           required
           fullWidth
-        //   inputProps={{
-        //     minLength: 8,
-        //     maxLength: 128,
-        //   }}
           slotProps={{
-          htmlInput: {
-            minLength: 8,
-            maxLength: 128,
-          },
-        }}
+            htmlInput: {
+              minLength: 8,
+              maxLength: 128,
+            },
+          }}
         />
       )}
 
       <FormControl fullWidth>
-        <InputLabel>Role</InputLabel>
+        <InputLabel id="user-role-label">
+          Role
+        </InputLabel>
 
         <Select
+          id="user-role"
+          labelId="user-role-label"
           value={role}
           label="Role"
-          onChange={(event) => setRole(event.target.value as UserRole)}
+          onChange={(event) =>
+            setRole(
+              event.target.value as UserRole,
+            )
+          }
         >
-          <MenuItem value="admin">Admin</MenuItem>
+          <MenuItem value="admin">
+            Admin
+          </MenuItem>
 
-          <MenuItem value="manager">Manager</MenuItem>
+          <MenuItem value="manager">
+            Manager
+          </MenuItem>
 
-          <MenuItem value="member">Member</MenuItem>
+          <MenuItem value="member">
+            Member
+          </MenuItem>
         </Select>
       </FormControl>
 
       {editMode && (
         <>
           <FormControl fullWidth>
-            <InputLabel>Status</InputLabel>
+            <InputLabel id="user-status-label">
+              Status
+            </InputLabel>
 
             <Select
+              id="user-status"
+              labelId="user-status-label"
               value={status}
               label="Status"
-              onChange={(event) => setStatus(event.target.value as UserStatus)}
+              onChange={(event) =>
+                setStatus(
+                  event.target.value as UserStatus,
+                )
+              }
             >
-              <MenuItem value="active">Active</MenuItem>
+              <MenuItem value="active">
+                Active
+              </MenuItem>
 
-              <MenuItem value="inactive">Inactive</MenuItem>
+              <MenuItem value="inactive">
+                Inactive
+              </MenuItem>
             </Select>
           </FormControl>
 
@@ -156,7 +234,11 @@ const UserForm = ({
             control={
               <Switch
                 checked={isActive}
-                onChange={(event) => setIsActive(event.target.checked)}
+                onChange={(event) =>
+                  setIsActive(
+                    event.target.checked,
+                  )
+                }
               />
             }
             label="Account Active"
@@ -181,10 +263,13 @@ const UserForm = ({
           },
         }}
       >
-        {loading ? "Saving..." : submitLabel}
+        {loading
+          ? "Saving..."
+          : submitLabel}
       </Button>
     </Stack>
   );
 };
 
 export default UserForm;
+

@@ -8,6 +8,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
+
 import { useEffect, useState } from "react";
 
 import type {
@@ -23,7 +24,9 @@ interface TaskFormProps {
   editMode?: boolean;
   loading?: boolean;
   submitLabel?: string;
-  onSubmit: (values: TaskCreate | TaskUpdate) => void | Promise<void>;
+  onSubmit: (
+    values: TaskCreate | TaskUpdate,
+  ) => void | Promise<void>;
 }
 
 const TaskForm = ({
@@ -33,46 +36,69 @@ const TaskForm = ({
   submitLabel = "Save Task",
   onSubmit,
 }: TaskFormProps) => {
-  const [title, setTitle] = useState(initialValues?.title ?? "");
-
-  const [description, setDescription] = useState(
-    initialValues?.description ?? "",
+  const [title, setTitle] = useState(
+    initialValues?.title ?? "",
   );
 
-  const [priority, setPriority] = useState<TaskPriority>(
-    initialValues?.priority ?? "medium",
-  );
+  const [description, setDescription] =
+    useState(
+      initialValues?.description ?? "",
+    );
 
-  const [status, setStatus] = useState<TaskStatus>(
-    initialValues?.status ?? "todo",
-  );
+  const [priority, setPriority] =
+    useState<TaskPriority>(
+      initialValues?.priority ?? "medium",
+    );
+
+  const [status, setStatus] =
+    useState<TaskStatus>(
+      initialValues?.status ?? "todo",
+    );
 
   const [dueDate, setDueDate] = useState(
     initialValues?.due_date ?? "",
   );
 
-  const [assigneeId, setAssigneeId] = useState(
-    initialValues?.assignee_id !== null &&
-      initialValues?.assignee_id !== undefined
-      ? String(initialValues.assignee_id)
-      : "",
-  );
+  const [assigneeId, setAssigneeId] =
+    useState(
+      initialValues?.assignee_id !== null &&
+        initialValues?.assignee_id !==
+          undefined
+        ? String(
+            initialValues.assignee_id,
+          )
+        : "",
+    );
 
   useEffect(() => {
-    setTitle(initialValues?.title ?? "");
+    setTitle(
+      initialValues?.title ?? "",
+    );
 
-    setDescription(initialValues?.description ?? "");
+    setDescription(
+      initialValues?.description ?? "",
+    );
 
-    setPriority(initialValues?.priority ?? "medium");
+    setPriority(
+      initialValues?.priority ?? "medium",
+    );
 
-    setStatus(initialValues?.status ?? "todo");
+    setStatus(
+      initialValues?.status ?? "todo",
+    );
 
-    setDueDate(initialValues?.due_date ?? "");
+    setDueDate(
+      initialValues?.due_date ?? "",
+    );
 
     setAssigneeId(
-      initialValues?.assignee_id !== null &&
-        initialValues?.assignee_id !== undefined
-        ? String(initialValues.assignee_id)
+      initialValues?.assignee_id !==
+        null &&
+        initialValues?.assignee_id !==
+          undefined
+        ? String(
+            initialValues.assignee_id,
+          )
         : "",
     );
   }, [initialValues]);
@@ -85,7 +111,8 @@ const TaskForm = ({
     if (editMode) {
       const payload: TaskUpdate = {
         title: title.trim(),
-        description: description.trim() || null,
+        description:
+          description.trim() || null,
         status,
         priority,
         due_date: dueDate || null,
@@ -100,7 +127,8 @@ const TaskForm = ({
 
     const payload: TaskCreate = {
       title: title.trim(),
-      description: description.trim() || null,
+      description:
+        description.trim() || null,
       priority,
       due_date: dueDate || null,
       assignee_id: assigneeId
@@ -118,9 +146,12 @@ const TaskForm = ({
       spacing={2.5}
     >
       <TextField
+        id="task-title"
         label="Task Title"
         value={title}
-        onChange={(event) => setTitle(event.target.value)}
+        onChange={(event) =>
+          setTitle(event.target.value)
+        }
         required
         fullWidth
         slotProps={{
@@ -132,10 +163,13 @@ const TaskForm = ({
       />
 
       <TextField
+        id="task-description"
         label="Description"
         value={description}
         onChange={(event) =>
-          setDescription(event.target.value)
+          setDescription(
+            event.target.value,
+          )
         }
         multiline
         minRows={4}
@@ -143,9 +177,13 @@ const TaskForm = ({
       />
 
       <FormControl fullWidth>
-        <InputLabel>Priority</InputLabel>
+        <InputLabel id="task-priority-label">
+          Priority
+        </InputLabel>
 
         <Select
+          id="task-priority"
+          labelId="task-priority-label"
           value={priority}
           label="Priority"
           onChange={(event) =>
@@ -154,18 +192,33 @@ const TaskForm = ({
             )
           }
         >
-          <MenuItem value="low">Low</MenuItem>
-          <MenuItem value="medium">Medium</MenuItem>
-          <MenuItem value="high">High</MenuItem>
-          <MenuItem value="urgent">Urgent</MenuItem>
+          <MenuItem value="low">
+            Low
+          </MenuItem>
+
+          <MenuItem value="medium">
+            Medium
+          </MenuItem>
+
+          <MenuItem value="high">
+            High
+          </MenuItem>
+
+          <MenuItem value="urgent">
+            Urgent
+          </MenuItem>
         </Select>
       </FormControl>
 
       {editMode && (
         <FormControl fullWidth>
-          <InputLabel>Status</InputLabel>
+          <InputLabel id="task-status-label">
+            Status
+          </InputLabel>
 
           <Select
+            id="task-status"
+            labelId="task-status-label"
             value={status}
             label="Status"
             onChange={(event) =>
@@ -174,13 +227,18 @@ const TaskForm = ({
               )
             }
           >
-            <MenuItem value="todo">To Do</MenuItem>
+            <MenuItem value="todo">
+              To Do
+            </MenuItem>
+
             <MenuItem value="in_progress">
               In Progress
             </MenuItem>
+
             <MenuItem value="completed">
               Completed
             </MenuItem>
+
             <MenuItem value="cancelled">
               Cancelled
             </MenuItem>
@@ -189,6 +247,7 @@ const TaskForm = ({
       )}
 
       <TextField
+        id="task-due-date"
         label="Due Date"
         type="date"
         value={dueDate}
@@ -204,11 +263,14 @@ const TaskForm = ({
       />
 
       <TextField
+        id="task-assignee-id"
         label="Assignee ID"
         type="number"
         value={assigneeId}
         onChange={(event) =>
-          setAssigneeId(event.target.value)
+          setAssigneeId(
+            event.target.value,
+          )
         }
         helperText="Leave empty for an unassigned task."
         fullWidth
@@ -229,7 +291,9 @@ const TaskForm = ({
           },
         }}
       >
-        {loading ? "Saving..." : submitLabel}
+        {loading
+          ? "Saving..."
+          : submitLabel}
       </Button>
     </Stack>
   );
