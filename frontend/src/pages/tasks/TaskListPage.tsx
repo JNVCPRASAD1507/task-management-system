@@ -192,7 +192,11 @@ export default function TaskListPage() {
               <TaskCard
                 key={task.id}
                 task={task}
-                onEdit={() => navigate(`/tasks/${task.id}/edit`)}
+                onEdit={
+                  canCreate
+                    ? () => navigate(`/tasks/${task.id}/edit`)
+                    : undefined
+                }
               />
             ))}
           </Box>

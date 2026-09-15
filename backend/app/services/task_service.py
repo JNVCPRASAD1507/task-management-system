@@ -1,11 +1,9 @@
-
-
 from math import ceil
 
 from sqlalchemy.orm import Session
 
 from app.core.constants import TaskPriority, TaskStatus
-from app.core.exceptions import NotFoundException
+from app.core.exceptions import ForbiddenException, NotFoundException
 from app.models.task import Task
 from app.repositories.task_repository import TaskRepository
 from app.repositories.user_repository import UserRepository
@@ -154,6 +152,46 @@ class TaskService:
 
         return TaskResponse.model_validate(task)
 
+    def update_status(
+        self,
+        task_id: int,
+        status: TaskStatus,
+        current_user_id: int,
+    ) -> TaskResponse:
+        task = self.task_repository.get_by_id(task_id)
+
+        if not task:
+            raise NotFoundException("Task not found")
+
+        # Member can update only tasks assigned to themselves.
+        if task.assignee_id != current_user_id:
+            raise ForbiddenException(
+                "You can update the status only of tasks assigned to you"
+            )
+
+        # Prevent changes to completed tasks.
+        current_status = task.status
+
+        if current_status == TaskStatus.COMPLETED.value:
+            raise ForbiddenException(
+                "Completed tasks cannot be changed"
+            )
+
+        # Members cannot move a task back to Todo.
+        if status == TaskStatus.TODO:
+            raise ForbiddenException(
+                "Assigned members cannot move a task back to Todo"
+            )
+
+        task.status = status.value
+
+        self.task_repository.update(task)
+
+        self.db.commit()
+        self.db.refresh(task)
+
+        return TaskResponse.model_validate(task)
+
     def delete(self, task_id: int) -> None:
         task = self.task_repository.get_by_id(task_id)
 
@@ -163,5 +201,3 @@ class TaskService:
         self.task_repository.delete(task)
 
         self.db.commit()
-        
-        

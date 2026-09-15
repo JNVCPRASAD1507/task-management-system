@@ -55,4 +55,17 @@ export const deleteTask = async (
   await api.delete(`/tasks/${taskId}`);
 };
 
+export const updateTaskStatus = async (
+  taskId: number,
+  status: Task["status"],
+): Promise<Task> => {
+  const response = await api.patch<Task>(
+    `/tasks/${taskId}/status`,
+    {
+      status,
+    },
+  );
+
+  return response.data;
+};
 

@@ -1,5 +1,3 @@
-
-
 from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -36,6 +34,10 @@ class TaskUpdate(BaseModel):
     assignee_id: int | None = None
 
 
+class TaskStatusUpdate(BaseModel):
+    status: TaskStatus
+
+
 class TaskResponse(TaskBase):
     id: int
     status: TaskStatus
@@ -53,3 +55,5 @@ class TaskListResponse(BaseModel):
     page: int
     page_size: int
     total_pages: int
+    
+    

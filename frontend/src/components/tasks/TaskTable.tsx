@@ -28,10 +28,7 @@ interface TaskTableProps {
   onDelete?: (task: Task) => void;
 }
 
-const TaskTable = ({
-  tasks,
-  onDelete,
-}: TaskTableProps) => {
+const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
   const navigate = useNavigate();
 
   if (tasks.length === 0) {
@@ -46,9 +43,7 @@ const TaskTable = ({
           textAlign: "center",
         }}
       >
-        <Typography color="text.secondary">
-          No tasks found.
-        </Typography>
+        <Typography color="text.secondary">No tasks found.</Typography>
       </Paper>
     );
   }
@@ -95,17 +90,14 @@ const TaskTable = ({
 
         <TableBody>
           {tasks.map((task) => (
-            <TableRow
-              key={task.id}
-              hover
-            >
+            <TableRow key={task.id} hover>
               <TableCell>
                 <Typography
                   sx={{
                     minWidth: 180,
                     maxWidth: 300,
                     wordBreak: "break-word",
-                    fontWeight:600,
+                    fontWeight: 600,
                   }}
                 >
                   {task.title}
@@ -121,41 +113,32 @@ const TaskTable = ({
               </TableCell>
 
               <TableCell>
-                {task.assignee_id
-                  ? `#${task.assignee_id}`
-                  : "Unassigned"}
+                {task.assignee_id ? `#${task.assignee_id}` : "Unassigned"}
               </TableCell>
 
-              <TableCell>
-                {task.due_date || "No due date"}
-              </TableCell>
+              <TableCell>{task.due_date || "No due date"}</TableCell>
 
               <TableCell align="right">
-                <Stack
-                  direction="row"
-                  sx={{justifyContent:"flex-end"}}
-                >
+                <Stack direction="row" sx={{ justifyContent: "flex-end" }}>
                   <Tooltip title="View">
                     <IconButton
                       size="small"
-                      onClick={() =>
-                        navigate(`/tasks/${task.id}`)
-                      }
+                      onClick={() => navigate(`/tasks/${task.id}`)}
                     >
                       <VisibilityOutlined fontSize="small" />
                     </IconButton>
                   </Tooltip>
 
-                  <Tooltip title="Edit">
-                    <IconButton
-                      size="small"
-                      onClick={() =>
-                        navigate(`/tasks/${task.id}/edit`)
-                      }
-                    >
-                      <EditOutlined fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
+                  {onDelete !== undefined && (
+                    <Tooltip title="Edit">
+                      <IconButton
+                        size="small"
+                        onClick={() => navigate(`/tasks/${task.id}/edit`)}
+                      >
+                        <EditOutlined fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
 
                   {onDelete && (
                     <Tooltip title="Delete">

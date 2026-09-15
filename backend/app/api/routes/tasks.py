@@ -10,6 +10,7 @@ from app.schemas.task import (
     TaskCreate,
     TaskListResponse,
     TaskResponse,
+    TaskStatusUpdate,
     TaskUpdate,
 )
 from app.services.task_service import TaskService
@@ -87,6 +88,35 @@ def create_task(
         current_user_id=current_user.id,
     )
 
+
+@router.patch(
+    "/{task_id}/status",
+    response_model=TaskResponse,
+)
+def update_task_status(
+    task_id: int,
+    data: TaskStatusUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    service = TaskService(db)
+
+    # Admin and manager can also update status.
+    if current_user.role in {
+        UserRole.ADMIN.value,
+        UserRole.MANAGER.value,
+    }:
+        return service.update(
+            task_id=task_id,
+            data=TaskUpdate(status=data.status),
+        )
+
+    # Member can update only their assigned task.
+    return service.update_status(
+        task_id=task_id,
+        status=data.status,
+        current_user_id=current_user.id,
+    )
 
 @router.put(
     "/{task_id}",
