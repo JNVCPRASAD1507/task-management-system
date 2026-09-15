@@ -181,7 +181,6 @@ task-management-system/
 ├── LICENSE
 └── README.md
 
-# Architecture
 
 
                     ┌─────────────────────┐
