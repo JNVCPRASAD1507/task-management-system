@@ -1,3 +1,4 @@
+
 import {
   Button,
   FormControl,
@@ -7,17 +8,19 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type {
   Task,
   TaskCreate,
   TaskPriority,
+  TaskStatus,
   TaskUpdate,
 } from "../../types/task.types";
 
 interface TaskFormProps {
   initialValues?: Partial<Task>;
+  editMode?: boolean;
   loading?: boolean;
   submitLabel?: string;
   onSubmit: (values: TaskCreate | TaskUpdate) => void | Promise<void>;
@@ -25,6 +28,7 @@ interface TaskFormProps {
 
 const TaskForm = ({
   initialValues,
+  editMode = false,
   loading = false,
   submitLabel = "Save Task",
   onSubmit,
@@ -39,28 +43,80 @@ const TaskForm = ({
     initialValues?.priority ?? "medium",
   );
 
-  const [dueDate, setDueDate] = useState(initialValues?.due_date ?? "");
-
-  const [assigneeId, setAssigneeId] = useState(
-    initialValues?.assignee_id ? String(initialValues.assignee_id) : "",
+  const [status, setStatus] = useState<TaskStatus>(
+    initialValues?.status ?? "todo",
   );
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const [dueDate, setDueDate] = useState(
+    initialValues?.due_date ?? "",
+  );
+
+  const [assigneeId, setAssigneeId] = useState(
+    initialValues?.assignee_id !== null &&
+      initialValues?.assignee_id !== undefined
+      ? String(initialValues.assignee_id)
+      : "",
+  );
+
+  useEffect(() => {
+    setTitle(initialValues?.title ?? "");
+
+    setDescription(initialValues?.description ?? "");
+
+    setPriority(initialValues?.priority ?? "medium");
+
+    setStatus(initialValues?.status ?? "todo");
+
+    setDueDate(initialValues?.due_date ?? "");
+
+    setAssigneeId(
+      initialValues?.assignee_id !== null &&
+        initialValues?.assignee_id !== undefined
+        ? String(initialValues.assignee_id)
+        : "",
+    );
+  }, [initialValues]);
+
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
+
+    if (editMode) {
+      const payload: TaskUpdate = {
+        title: title.trim(),
+        description: description.trim() || null,
+        status,
+        priority,
+        due_date: dueDate || null,
+        assignee_id: assigneeId
+          ? Number(assigneeId)
+          : null,
+      };
+
+      await onSubmit(payload);
+      return;
+    }
 
     const payload: TaskCreate = {
       title: title.trim(),
       description: description.trim() || null,
       priority,
       due_date: dueDate || null,
-      assignee_id: assigneeId ? Number(assigneeId) : null,
+      assignee_id: assigneeId
+        ? Number(assigneeId)
+        : null,
     };
 
     await onSubmit(payload);
   };
 
   return (
-    <Stack component="form" onSubmit={handleSubmit} spacing={2.5}>
+    <Stack
+      component="form"
+      onSubmit={handleSubmit}
+      spacing={2.5}
+    >
       <TextField
         label="Task Title"
         value={title}
@@ -69,6 +125,7 @@ const TaskForm = ({
         fullWidth
         slotProps={{
           htmlInput: {
+            minLength: 2,
             maxLength: 200,
           },
         }}
@@ -77,7 +134,9 @@ const TaskForm = ({
       <TextField
         label="Description"
         value={description}
-        onChange={(event) => setDescription(event.target.value)}
+        onChange={(event) =>
+          setDescription(event.target.value)
+        }
         multiline
         minRows={4}
         fullWidth
@@ -89,7 +148,11 @@ const TaskForm = ({
         <Select
           value={priority}
           label="Priority"
-          onChange={(event) => setPriority(event.target.value as TaskPriority)}
+          onChange={(event) =>
+            setPriority(
+              event.target.value as TaskPriority,
+            )
+          }
         >
           <MenuItem value="low">Low</MenuItem>
           <MenuItem value="medium">Medium</MenuItem>
@@ -98,24 +161,55 @@ const TaskForm = ({
         </Select>
       </FormControl>
 
+      {editMode && (
+        <FormControl fullWidth>
+          <InputLabel>Status</InputLabel>
+
+          <Select
+            value={status}
+            label="Status"
+            onChange={(event) =>
+              setStatus(
+                event.target.value as TaskStatus,
+              )
+            }
+          >
+            <MenuItem value="todo">To Do</MenuItem>
+            <MenuItem value="in_progress">
+              In Progress
+            </MenuItem>
+            <MenuItem value="completed">
+              Completed
+            </MenuItem>
+            <MenuItem value="cancelled">
+              Cancelled
+            </MenuItem>
+          </Select>
+        </FormControl>
+      )}
+
       <TextField
         label="Due Date"
         type="date"
         value={dueDate}
-        onChange={(event) => setDueDate(event.target.value)}
+        onChange={(event) =>
+          setDueDate(event.target.value)
+        }
+        fullWidth
         slotProps={{
           inputLabel: {
             shrink: true,
           },
         }}
-        fullWidth
       />
 
       <TextField
         label="Assignee ID"
         type="number"
         value={assigneeId}
-        onChange={(event) => setAssigneeId(event.target.value)}
+        onChange={(event) =>
+          setAssigneeId(event.target.value)
+        }
         helperText="Leave empty for an unassigned task."
         fullWidth
       />
@@ -124,7 +218,10 @@ const TaskForm = ({
         type="submit"
         variant="contained"
         size="large"
-        disabled={loading || !title.trim()}
+        disabled={
+          loading ||
+          !title.trim()
+        }
         sx={{
           alignSelf: {
             xs: "stretch",
@@ -139,3 +236,4 @@ const TaskForm = ({
 };
 
 export default TaskForm;
+
