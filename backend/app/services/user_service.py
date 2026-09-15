@@ -126,6 +126,33 @@ class UserService:
         self.db.refresh(user)
 
         return UserResponse.model_validate(user)
+    
+    def update_profile(
+    self,
+    user: User,
+    data: UserUpdate,
+) -> UserResponse:
+        if data.email and data.email != user.email:
+            existing_user = self.user_repository.get_by_email(
+            data.email
+        )
+
+        if existing_user and existing_user.id != user.id:
+            raise ConflictException(
+                "A user with this email already exists"
+            )
+
+        user.email = data.email
+
+        if data.full_name is not None:
+            user.full_name = data.full_name
+
+        self.user_repository.update(user)
+
+        self.db.commit()
+        self.db.refresh(user)
+
+        return UserResponse.model_validate(user)
 
     def delete(self, user_id: int) -> None:
         user = self.user_repository.get_by_id(user_id)

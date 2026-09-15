@@ -5,6 +5,7 @@ import {
   SaveOutlined,
   SecurityOutlined,
 } from "@mui/icons-material";
+
 import {
   Alert,
   Avatar,
@@ -18,44 +19,54 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-interface ProfileUser {
-  id?: number | string;
-  full_name?: string;
-  email?: string;
-  role?: string;
-  status?: string;
-  is_active?: boolean;
-}
+import { updateCurrentUser } from "../../api/auth.api";
+import { useAuth } from "../../hooks/useAuth";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
 
-  /*
-   * Temporary profile data.
-   *
-   * Replace this with your authenticated user from useAuth()
-   * or useUser() when connecting the API.
-   */
-  const [user, setUser] = useState<ProfileUser>({
-    id: 1,
-    full_name: "John Doe",
-    email: "john@example.com",
-    role: "member",
-    status: "active",
-    is_active: true,
-  });
+  const { user, refreshUser } = useAuth();
 
   const [editMode, setEditMode] = useState(false);
-  const [fullName, setFullName] = useState(user.full_name ?? "");
-  const [email, setEmail] = useState(user.email ?? "");
+
+  const [fullName, setFullName] = useState(user?.full_name ?? "");
+
+  const [email, setEmail] = useState(user?.email ?? "");
 
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
-  const initials = (user.full_name ?? "User")
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    setFullName(user.full_name);
+    setEmail(user.email);
+  }, [user]);
+
+  if (!user) {
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: 1000,
+          mx: "auto",
+          px: { xs: 2, sm: 3 },
+          py: { xs: 3, md: 4 },
+        }}
+      >
+        <Alert severity="error">Unable to load your profile.</Alert>
+      </Box>
+    );
+  }
+
+  const initials = user.full_name
     .split(" ")
     .filter(Boolean)
     .map((name) => name[0])
@@ -67,53 +78,75 @@ const ProfilePage = () => {
     setSuccess("");
     setError("");
 
-    setFullName(user.full_name ?? "");
-    setEmail(user.email ?? "");
+    setFullName(user.full_name);
+    setEmail(user.email);
+
     setEditMode(true);
   };
 
   const handleCancel = () => {
-    setFullName(user.full_name ?? "");
-    setEmail(user.email ?? "");
+    setFullName(user.full_name);
+    setEmail(user.email);
+
     setError("");
     setEditMode(false);
   };
 
-  const handleSave = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSave = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     setSuccess("");
     setError("");
 
-    if (!fullName.trim()) {
+    const trimmedName = fullName.trim();
+    const trimmedEmail = email.trim();
+
+    if (!trimmedName) {
       setError("Full name is required.");
       return;
     }
 
-    if (!email.trim()) {
+    if (trimmedName.length < 2) {
+      setError("Full name must contain at least 2 characters.");
+      return;
+    }
+
+    if (!trimmedEmail) {
       setError("Email is required.");
       return;
     }
 
-    /*
-     * Connect your backend API here.
-     *
-     * Example:
-     *
-     * await userService.updateProfile({
-     *   full_name: fullName.trim(),
-     *   email: email.trim(),
-     * });
-     */
+    try {
+      setIsSaving(true);
 
-    setUser((previous) => ({
-      ...previous,
-      full_name: fullName.trim(),
-      email: email.trim(),
-    }));
+      const updatedUser = await updateCurrentUser({
+        full_name: trimmedName,
+        email: trimmedEmail,
+      });
 
-    setEditMode(false);
-    setSuccess("Profile updated successfully.");
+      /*
+       * Refresh the authenticated user.
+       *
+       * This updates:
+       * - React AuthContext
+       * - localStorage["user"]
+       * - ProfilePage
+       */
+      await refreshUser();
+
+      setFullName(updatedUser.full_name);
+      setEmail(updatedUser.email);
+
+      setEditMode(false);
+      setSuccess("Profile updated successfully.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to update profile.";
+
+      setError(message);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -127,7 +160,6 @@ const ProfilePage = () => {
       }}
     >
       <Stack spacing={3}>
-        {/* Header */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
@@ -179,7 +211,6 @@ const ProfilePage = () => {
 
         {error && <Alert severity="error">{error}</Alert>}
 
-        {/* Profile Card */}
         <Card
           elevation={0}
           sx={{
@@ -188,11 +219,20 @@ const ProfilePage = () => {
             borderRadius: 3,
           }}
         >
-          <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+          <CardContent
+            sx={{
+              p: {
+                xs: 3,
+                sm: 4,
+              },
+            }}
+          >
             <Stack spacing={4}>
-              {/* User Header */}
               <Stack
-                direction={{ xs: "column", sm: "row" }}
+                direction={{
+                  xs: "column",
+                  sm: "row",
+                }}
                 spacing={3}
                 sx={{
                   alignItems: {
@@ -221,11 +261,31 @@ const ProfilePage = () => {
                     },
                   }}
                 >
-                  <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: 700,
+                      textAlign: {
+                        xs: "center",
+                        sm: "left",
+                      },
+                    }}
+                  >
                     {user.full_name}
                   </Typography>
 
-                  <Typography color="text.secondary">{user.email}</Typography>
+                  <Typography
+                    color="text.secondary"
+                    sx={{
+                      wordBreak: "break-word",
+                      textAlign: {
+                        xs: "center",
+                        sm: "left",
+                      },
+                    }}
+                  >
+                    {user.email}
+                  </Typography>
 
                   <Stack
                     direction="row"
@@ -239,7 +299,7 @@ const ProfilePage = () => {
                     }}
                   >
                     <Chip
-                      label={user.role ?? "Member"}
+                      label={user.role}
                       size="small"
                       sx={{
                         fontWeight: 600,
@@ -258,18 +318,23 @@ const ProfilePage = () => {
 
               <Divider />
 
-              {/* Profile Form */}
               <Stack component="form" onSubmit={handleSave} spacing={3}>
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>
                   Personal Information
                 </Typography>
 
-                <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+                <Stack
+                  direction={{
+                    xs: "column",
+                    md: "row",
+                  }}
+                  spacing={2}
+                >
                   <TextField
                     label="Full Name"
                     value={fullName}
                     onChange={(event) => setFullName(event.target.value)}
-                    disabled={!editMode}
+                    disabled={!editMode || isSaving}
                     fullWidth
                     required
                     slotProps={{
@@ -295,7 +360,7 @@ const ProfilePage = () => {
                     type="email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    disabled={!editMode}
+                    disabled={!editMode || isSaving}
                     fullWidth
                     required
                     slotProps={{
@@ -315,7 +380,7 @@ const ProfilePage = () => {
 
                 <TextField
                   label="Role"
-                  value={user.role ?? ""}
+                  value={user.role}
                   disabled
                   fullWidth
                   sx={{
@@ -328,7 +393,10 @@ const ProfilePage = () => {
 
                 {editMode && (
                   <Stack
-                    direction={{ xs: "column", sm: "row" }}
+                    direction={{
+                      xs: "column",
+                      sm: "row",
+                    }}
                     spacing={2}
                     sx={{
                       pt: 1,
@@ -342,14 +410,16 @@ const ProfilePage = () => {
                       type="submit"
                       variant="contained"
                       startIcon={<SaveOutlined />}
+                      disabled={isSaving}
                     >
-                      Save Changes
+                      {isSaving ? "Saving..." : "Save Changes"}
                     </Button>
 
                     <Button
                       type="button"
                       variant="outlined"
                       onClick={handleCancel}
+                      disabled={isSaving}
                     >
                       Cancel
                     </Button>
@@ -360,7 +430,6 @@ const ProfilePage = () => {
           </CardContent>
         </Card>
 
-        {/* Security Card */}
         <Card
           elevation={0}
           sx={{
@@ -369,9 +438,22 @@ const ProfilePage = () => {
             borderRadius: 3,
           }}
         >
-          <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+          <CardContent
+            sx={{
+              p: {
+                xs: 3,
+                sm: 4,
+              },
+            }}
+          >
             <Stack spacing={2}>
-              <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{
+                  alignItems: "center",
+                }}
+              >
                 <SecurityOutlined color="primary" />
 
                 <Box>

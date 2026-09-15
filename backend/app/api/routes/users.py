@@ -50,6 +50,22 @@ def get_users(
         page=page,
         page_size=page_size,
     )
+    
+@router.put(
+    "/me",
+    response_model=UserResponse,
+)
+def update_my_profile(
+    data: UserUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    service = UserService(db)
+
+    return service.update_profile(
+        user=current_user,
+        data=data,
+    )
 
 
 @router.get(
