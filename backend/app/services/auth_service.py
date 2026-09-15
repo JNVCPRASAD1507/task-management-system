@@ -27,7 +27,7 @@ class AuthService:
             full_name = data.full_name,
             email = data.email,
             hashed_password = hash_password(data.password),
-            role = "member",
+            role = data.role.value,
             status = UserStatus.ACTIVE.value,
             is_active = True            
         )

@@ -1,10 +1,7 @@
-
 import { z } from "zod";
 
 export const loginSchema = z.object({
-  email: z
-    .string()
-    .email("Please enter a valid email address."),
+  email: z.string().email("Please enter a valid email address."),
 
   password: z
     .string()
@@ -18,14 +15,14 @@ export const registerSchema = z.object({
     .min(2, "Full name must contain at least 2 characters.")
     .max(100, "Full name is too long."),
 
-  email: z
-    .string()
-    .email("Please enter a valid email address."),
+  email: z.string().email("Please enter a valid email address."),
 
   password: z
     .string()
     .min(8, "Password must contain at least 8 characters.")
     .max(128, "Password is too long."),
+
+  role: z.enum(["admin", "manager", "member"]),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;

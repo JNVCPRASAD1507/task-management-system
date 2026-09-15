@@ -1,13 +1,6 @@
+import { useEffect, useState } from "react";
 
-import {
-  useEffect,
-  useState,
-} from "react";
-
-import {
-  Link,
-  useNavigate,
-} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   Alert,
@@ -18,63 +11,50 @@ import {
   CircularProgress,
   Container,
   Divider,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 
-import {
-  PersonAddOutlined,
-} from "@mui/icons-material";
+import { PersonAddOutlined } from "@mui/icons-material";
 
-import {
-  useForm,
-} from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
-import {
-  zodResolver,
-} from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
   registerSchema,
   type RegisterFormData,
 } from "../../schemas/auth.schema";
 
-import {
-  useAuth,
-} from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
-import {
-  getErrorMessage,
-} from "../../utils/errorHandler";
+import { getErrorMessage } from "../../utils/errorHandler";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
 
-  const {
-    register,
-    isAuthenticated,
-    isLoading,
-  } = useAuth();
+  const { register, isAuthenticated, isLoading } = useAuth();
 
-  const [error, setError] =
-    useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const {
     register: registerField,
     handleSubmit,
-    formState: {
-      errors,
-      isSubmitting,
-    },
+    control,
+    formState: { errors, isSubmitting },
     watch,
   } = useForm<RegisterFormData>({
-    resolver:
-      zodResolver(registerSchema),
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       full_name: "",
       email: "",
       password: "",
+      role: "member",
     },
   });
 
@@ -86,15 +66,9 @@ const RegisterPage = () => {
         replace: true,
       });
     }
-  }, [
-    isAuthenticated,
-    isLoading,
-    navigate,
-  ]);
+  }, [isAuthenticated, isLoading, navigate]);
 
-  const onSubmit = async (
-    data: RegisterFormData,
-  ) => {
+  const onSubmit = async (data: RegisterFormData) => {
     try {
       setError(null);
 
@@ -104,14 +78,10 @@ const RegisterPage = () => {
         replace: true,
       });
     } catch (err) {
-      setError(
-        getErrorMessage(
-          err,
-          "Registration failed. Please try again.",
-        ),
-      );
+      setError(getErrorMessage(err, "Registration failed. Please try again."));
     }
   };
+
 
   return (
     <Box
@@ -120,8 +90,7 @@ const RegisterPage = () => {
         display: "flex",
         alignItems: "center",
         py: 4,
-        background:
-          "linear-gradient(135deg, #f5f7fb 0%, #e8eef7 100%)",
+        background: "linear-gradient(135deg, #f5f7fb 0%, #e8eef7 100%)",
       }}
     >
       <Container maxWidth="sm">
@@ -134,11 +103,7 @@ const RegisterPage = () => {
           }}
         >
           <CardContent sx={{ p: { xs: 3, sm: 5 } }}>
-            <Stack
-              spacing={3}
-              sx={{alignItems:"center" }}
-            >
-
+            <Stack spacing={3} sx={{ alignItems: "center" }}>
               <Box
                 sx={{
                   width: 56,
@@ -154,54 +119,35 @@ const RegisterPage = () => {
                 <PersonAddOutlined />
               </Box>
 
-              <Box sx={{textAlign:"center"}}>
-                <Typography
-                  variant="h4"
-                  sx={{ fontWeight:700}}
-                >
+              <Box sx={{ textAlign: "center" }}>
+                <Typography variant="h4" sx={{ fontWeight: 700 }}>
                   Create Account
                 </Typography>
 
-                <Typography
-                  color="text.secondary"
-                  sx={{ mt: 1 }}
-                >
-                  Create your Task Management
-                  account
+                <Typography color="text.secondary" sx={{ mt: 1 }}>
+                  Create your Task Management account
                 </Typography>
               </Box>
 
               {error && (
-                <Alert
-                  severity="error"
-                  sx={{ width: "100%" }}
-                >
+                <Alert severity="error" sx={{ width: "100%" }}>
                   {error}
                 </Alert>
               )}
 
               <Box
                 component="form"
-                onSubmit={handleSubmit(
-                  onSubmit,
-                )}
+                onSubmit={handleSubmit(onSubmit)}
                 sx={{ width: "100%" }}
               >
                 <Stack spacing={2.5}>
-
                   <TextField
                     fullWidth
                     label="Full Name"
                     autoComplete="name"
-                    {...registerField(
-                      "full_name",
-                    )}
-                    error={Boolean(
-                      errors.full_name,
-                    )}
-                    helperText={
-                      errors.full_name?.message
-                    }
+                    {...registerField("full_name")}
+                    error={Boolean(errors.full_name)}
+                    helperText={errors.full_name?.message}
                   />
 
                   <TextField
@@ -209,15 +155,9 @@ const RegisterPage = () => {
                     label="Email"
                     type="email"
                     autoComplete="email"
-                    {...registerField(
-                      "email",
-                    )}
-                    error={Boolean(
-                      errors.email,
-                    )}
-                    helperText={
-                      errors.email?.message
-                    }
+                    {...registerField("email")}
+                    error={Boolean(errors.email)}
+                    helperText={errors.email?.message}
                   />
 
                   <TextField
@@ -225,16 +165,41 @@ const RegisterPage = () => {
                     label="Password"
                     type="password"
                     autoComplete="new-password"
-                    {...registerField(
-                      "password",
-                    )}
-                    error={Boolean(
-                      errors.password,
-                    )}
+                    {...registerField("password")}
+                    error={Boolean(errors.password)}
                     helperText={
-                      errors.password?.message ||
-                      "Minimum 8 characters"
+                      errors.password?.message || "Minimum 8 characters"
                     }
+                  />
+                  <Controller
+                    name="role"
+                    control={control}
+                    render={({ field }) => (
+                      <FormControl fullWidth error={Boolean(errors.role)}>
+                        <InputLabel id="role-label">Role</InputLabel>
+
+                        <Select {...field} labelId="role-label" label="Role">
+                          <MenuItem value="member">Member</MenuItem>
+
+                          <MenuItem value="manager">Manager</MenuItem>
+
+                          <MenuItem value="admin">Admin</MenuItem>
+                        </Select>
+
+                        {errors.role && (
+                          <Typography
+                            variant="caption"
+                            color="error"
+                            sx={{
+                              mt: 0.5,
+                              ml: 1.5,
+                            }}
+                          >
+                            {errors.role.message}
+                          </Typography>
+                        )}
+                      </FormControl>
+                    )}
                   />
 
                   <Button
@@ -242,36 +207,23 @@ const RegisterPage = () => {
                     variant="contained"
                     size="large"
                     fullWidth
-                    disabled={
-                      isSubmitting ||
-                      isLoading ||
-                      !password
-                    }
+                    disabled={isSubmitting || isLoading || !password}
                     sx={{
                       minHeight: 48,
                     }}
                   >
                     {isSubmitting ? (
-                      <CircularProgress
-                        size={24}
-                        color="inherit"
-                      />
+                      <CircularProgress size={24} color="inherit" />
                     ) : (
                       "Create Account"
                     )}
                   </Button>
-
                 </Stack>
               </Box>
 
-              <Divider sx={{ width: "100%" }}>
-                OR
-              </Divider>
+              <Divider sx={{ width: "100%" }}>OR</Divider>
 
-              <Typography
-                variant="body2"
-                color="text.secondary"
-              >
+              <Typography variant="body2" color="text.secondary">
                 Already have an account?
               </Typography>
 
@@ -284,7 +236,6 @@ const RegisterPage = () => {
               >
                 Sign In
               </Button>
-
             </Stack>
           </CardContent>
         </Card>

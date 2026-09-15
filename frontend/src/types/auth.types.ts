@@ -20,6 +20,7 @@ export interface RegisterRequest {
   full_name: string;
   email: string;
   password: string;
+  role: UserRole;
 }
 
 export interface TokenResponse {
@@ -32,4 +33,3 @@ export interface AuthResponse {
   token_type: string;
   user: User;
 }
-
